@@ -1,6 +1,6 @@
 terraform {
 
-  required_version = ">=1.3.1"
+  required_version = ">=1.3.6"
 
   backend "s3" {
     bucket         = "hunter-tf-backend"
@@ -28,12 +28,12 @@ terraform {
     }
 
     tls = {
-      source = "hashicorp/tls"
+      source  = "hashicorp/tls"
       version = "~> 4.0.4"
     }
 
     local = {
-      source = "hashicorp/local"
+      source  = "hashicorp/local"
       version = "~> 2.3.0"
     }
 

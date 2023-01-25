@@ -18,15 +18,24 @@ resource "aws_key_pair" "ssh-file" {
 }
 
 resource "local_file" "instance_keys" {
-  filename = "../${aws_key_pair.ssh-file.key_name}.pem"
+  filename        = "../${aws_key_pair.ssh-file.key_name}.pem"
   file_permission = "0400"
-  content = tls_private_key.private_key.private_key_pem
+  content         = tls_private_key.private_key.private_key_pem
 }
 
 resource "aws_instance" "zealot" {
   ami           = data.aws_ami.amazon_linux.id
   instance_type = "t3.micro"
-  key_name = aws_key_pair.ssh-file.key_name
+  key_name      = aws_key_pair.ssh-file.key_name
+  metadata_options {
+    http_endpoint               = "enabled"
+    http_put_response_hop_limit = 1
+    http_tokens                 = "optional"
+    instance_metadata_tags      = "enabled"
+  }
+  private_dns_name_options {
+    hostname_type = "resource-name"
+  }
   tags = {
     Name = "CheckInstance"
   }
