@@ -24,9 +24,13 @@ resource "local_file" "instance_keys" {
 }
 
 resource "aws_instance" "zealot" {
-  ami           = data.aws_ami.amazon_linux.id
-  instance_type = "t3.micro"
-  key_name      = aws_key_pair.ssh-file.key_name
+  ami             = data.aws_ami.amazon_linux.id
+  instance_type   = "t3.micro"
+  key_name        = aws_key_pair.ssh-file.key_name
+  vpc_security_group_ids = [
+    "default",
+    var.scout-sg
+  ]
   metadata_options {
     http_endpoint               = "enabled"
     http_put_response_hop_limit = 1
