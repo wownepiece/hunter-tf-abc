@@ -3,8 +3,10 @@ provider "aws" {
 
   default_tags {
     tags = {
-      RUN_TIME_ENV = "RD"
-      MAINTAINER   = "HUNTER"
+      RUNTIME_ENV = "R&D"
+      Maintainer  = "Hunter"
+      Project     = "${var.project-name}"
+      Namespace   = "${var.namespace}"
     }
 
   }

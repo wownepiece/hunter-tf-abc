@@ -2,7 +2,7 @@ variable "namespace" {
   type = string
 }
 
-variable "project_name" {
+variable "project-name" {
   type = string
 }
 
@@ -16,9 +16,10 @@ variable "scout-sg" {
   type        = string
 }
 
-variable "vpc" {
-    type = any
+variable "primary-vpc" {
+  type = any
+}
+variable "primary-public-subnet" {
+  type = any
 
 }
-
-

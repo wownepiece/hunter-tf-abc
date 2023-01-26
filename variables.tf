@@ -12,7 +12,7 @@ variable "namespace" {
 }
 
 
-variable "project_name" {
+variable "project-name" {
   description = "the name of project"
   type        = string
 }
@@ -23,3 +23,18 @@ variable "ssh_key" {
   type        = string
 
 }
+
+variable "primary-cidr-block" {
+  type = string
+}
+
+variable "primary-subnet-private-cidr-block" {
+  type = string
+
+}
+variable "primary-subnet-public-cidr-block" {
+  type = string
+
+}
+
+

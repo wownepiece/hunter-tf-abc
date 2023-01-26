@@ -13,7 +13,7 @@ resource "tls_private_key" "private_key" {
 }
 
 resource "aws_key_pair" "ssh-file" {
-  key_name   = "${var.project_name}-key"
+  key_name   = "${var.project-name}-key"
   public_key = tls_private_key.private_key.public_key_openssh
 }
 
@@ -24,13 +24,14 @@ resource "local_file" "instance_keys" {
 }
 
 resource "aws_instance" "zealot" {
-  ami             = data.aws_ami.amazon_linux.id
-  instance_type   = "t3.micro"
-  key_name        = aws_key_pair.ssh-file.key_name
+  ami           = data.aws_ami.amazon_linux.id
+  instance_type = "t3.micro"
+  key_name      = aws_key_pair.ssh-file.key_name
+  subnet_id     = var.primary-public-subnet.id
   vpc_security_group_ids = [
-    "default",
     var.scout-sg
   ]
+
   metadata_options {
     http_endpoint               = "enabled"
     http_put_response_hop_limit = 1
