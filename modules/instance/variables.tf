@@ -23,3 +23,10 @@ variable "primary-public-subnet" {
   type = any
 
 }
+variable "cloud-config-msg" {
+  type = map
+}
+variable "telegraf-tag" {
+  type = map
+
+}

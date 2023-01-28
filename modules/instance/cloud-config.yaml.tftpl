@@ -1,0 +1,18 @@
+#cloud-config
+packages:
+  - unzip
+  - tree
+  - htop
+
+write_files:
+  - path: /test-template.yaml
+    owner: root:root
+    permission: "0644"
+    content: |
+      {
+        "port": 1984,
+        "msg": "host=${msg}"
+      }
+
+runcmd:
+  - [wget, "http://example.org",-O, /wget.output.html]

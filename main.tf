@@ -14,5 +14,7 @@ module "instance" {
   scout-sg              = module.network-infrastructure.scout-sg
   primary-vpc           = module.network-infrastructure.primary-vpc
   primary-public-subnet = module.network-infrastructure.primary-public-subnet
+  cloud-config-msg      = { msg : "HunterHunter" }
+  telegraf-tag          = {tag:"scout-metrics"}
 
 }
