@@ -12,7 +12,11 @@ variable "ssh_key" {
 }
 
 variable "scout-sg" {
-  description = "security group for scout"
+  description = "security group for scout common"
+  type        = string
+}
+variable "consul-sg" {
+  description = "security group for consul"
   type        = string
 }
 
@@ -24,9 +28,13 @@ variable "primary-public-subnet" {
 
 }
 variable "cloud-config-msg" {
-  type = map
+  type = map(any)
 }
 variable "telegraf-tag" {
-  type = map
+  type = map(any)
+}
+
+variable "consul-data-dir" {
+  type = string
 
 }

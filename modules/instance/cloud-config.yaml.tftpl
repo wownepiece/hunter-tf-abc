@@ -3,16 +3,31 @@ packages:
   - unzip
   - tree
   - htop
+  - nc
 
 write_files:
-  - path: /test-template.yaml
+  - path: /scout/consul/server-config.json
     owner: root:root
     permission: "0644"
     content: |
       {
-        "port": 1984,
-        "msg": "host=${msg}"
+        "node_name": "${consul-node-name}",
+        "server": true,
+        "bootstrap": true,
+        "ui_config": {
+          "enabled": true
+        },
+        "datacenter": "${consul-datacenter-name}",
+        "data_dir": "${consul-data-dir}",
+        "log_level": "INFO",
+        "addresses": {
+          "http": "0.0.0.0"
+        },
+        "connect": {
+          "enabled": true
+        }
       }
 
 runcmd:
-  - [wget, "http://example.org",-O, /wget.output.html]
+  - [wget, "http://example.org", -O, /wget.output.html]
+  - [mkdir, -vp, "${consul-data-dir}"]

@@ -23,15 +23,23 @@ resource "local_file" "instance_keys" {
   content         = tls_private_key.private_key.private_key_pem
 }
 
+data "aws_region" "current" {}
+
 data "cloudinit_config" "scout" {
   gzip          = false
   base64_encode = false
   part {
     content_type = "text/cloud-config"
-    content      = templatefile("${path.module}/cloud-config.yaml.tftpl", var.cloud-config-msg)
-    filename     = "hunter.yaml"
+    content = templatefile(
+      "${path.module}/cloud-config.yaml.tftpl",
+      {
+        "consul-node-name"       = "consul-server-name",
+        "consul-datacenter-name" = "dc-${data.aws_region.current.name}",
+        "consul-data-dir"        = var.consul-data-dir
+      }
+    )
+    filename = "hunter.yaml"
   }
-
   part {
     content_type = "text/x-shellscript"
     filename     = "hunter.sh"
@@ -70,7 +78,7 @@ EOT
     content      = <<-HEREDOC
 yum install -y yum-utils shadow-utils
 yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
-yum -y install consul
+yum -y install consul nomad
 HEREDOC
   }
 
@@ -80,8 +88,7 @@ HEREDOC
     content      = <<-HEREDOC
 amazon-linux-extras install epel
 yum install epel-release -y
-yum install iftop -y
-yum install iotop -y
+yum install iftop iotop -y
 HEREDOC
   }
 
@@ -90,6 +97,9 @@ HEREDOC
 resource "aws_eip" "zealot" {
   instance = aws_instance.zealot.id
   vpc      = true
+  tags = {
+    "Name" = "scout-eip"
+  }
 }
 
 resource "aws_instance" "zealot" {
@@ -101,7 +111,9 @@ resource "aws_instance" "zealot" {
   user_data                   = data.cloudinit_config.scout.rendered
   user_data_replace_on_change = true # TODO: remove this line
   vpc_security_group_ids = [
-    var.scout-sg
+    var.scout-sg,
+    var.consul-sg
+
   ]
 
   metadata_options {

@@ -53,7 +53,7 @@ resource "aws_subnet" "private" {
 
 resource "aws_route_table_association" "primary" {
   route_table_id = aws_route_table.primary.id
-  subnet_id = aws_subnet.public.id
+  subnet_id      = aws_subnet.public.id
 }
 
 
@@ -81,6 +81,9 @@ resource "aws_security_group" "scout" {
     ipv6_cidr_blocks = ["::/0"]
 
   }
+  tags = {
+    "Name" = "scout-common"
+  }
 }
 resource "aws_security_group_rule" "allow_ssh" {
   description       = "allow ssh access"
@@ -90,6 +93,7 @@ resource "aws_security_group_rule" "allow_ssh" {
   from_port         = 22
   to_port           = 22
   security_group_id = aws_security_group.scout.id
+
 }
 
 
@@ -101,4 +105,42 @@ resource "aws_security_group_rule" "allow_443" {
   from_port         = 443
   to_port           = 443
   security_group_id = aws_security_group.scout.id
+}
+
+
+resource "aws_security_group" "consul-sg" {
+  name        = "${var.namespace}-${var.project-name}-consul"
+  description = "consul security group"
+  vpc_id      = aws_vpc.primary.id
+  egress {
+    protocol         = "-1"
+    from_port        = 0
+    to_port          = 0
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  tags = {
+    "Name" = "consul-sg"
+  }
+}
+resource "aws_security_group_rule" "allow_8300" {
+  description       = "allow access to consul services"
+  type              = "ingress"
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 8300
+  to_port           = 8300
+  security_group_id = aws_security_group.consul-sg.id
+}
+
+resource "aws_security_group_rule" "allow_8500" {
+  description       = "allow access to consul http api"
+  type              = "ingress"
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  from_port         = 8500
+  to_port           = 8500
+  security_group_id = aws_security_group.consul-sg.id
+
 }

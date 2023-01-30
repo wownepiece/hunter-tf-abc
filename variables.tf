@@ -36,5 +36,8 @@ variable "primary-subnet-public-cidr-block" {
   type = string
 
 }
+variable "consul-data-dir" {
+  type = string
+}
 
 

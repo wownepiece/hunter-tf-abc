@@ -12,9 +12,11 @@ module "instance" {
   project-name          = var.project-name
   ssh_key               = var.ssh_key
   scout-sg              = module.network-infrastructure.scout-sg
+  consul-sg             = module.network-infrastructure.consul-sg
   primary-vpc           = module.network-infrastructure.primary-vpc
   primary-public-subnet = module.network-infrastructure.primary-public-subnet
+  consul-data-dir       = var.consul-data-dir
   cloud-config-msg      = { msg : "HunterHunter" }
-  telegraf-tag          = {tag:"scout-metrics"}
+  telegraf-tag          = { tag : "scout-metrics" }
 
 }
