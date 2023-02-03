@@ -24,6 +24,11 @@ variable "ssh_key" {
 
 }
 
+variable "ssh-key-name" {
+  default = "ssh key name for ec2 ssh login"
+  type    = string
+}
+
 variable "primary-cidr-block" {
   type = string
 }
@@ -38,6 +43,19 @@ variable "primary-subnet-public-cidr-block" {
 }
 variable "consul-data-dir" {
   type = string
+}
+
+variable "consul-configs" {
+  type = map(any)
+  default = {
+    config-dir  = "/maverick/consul/config",
+    config-file = "/maverick/consul/config/server-config.json",
+    data-dir    = "/mnt/consul/data/",
+    datacenter  = "default",          # default value, change on launch
+    node-name   = "consul-node-name", # default value, change on launch
+    log-level   = "info",
+  }
+  nullable = false
 }
 
 

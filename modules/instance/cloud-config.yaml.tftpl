@@ -6,28 +6,33 @@ packages:
   - nc
 
 write_files:
-  - path: /scout/consul/server-config.json
+  - path: ${config-file}
     owner: root:root
     permission: "0644"
+    # consul server configuration file
     content: |
-      {
-        "node_name": "${consul-node-name}",
-        "server": true,
-        "bootstrap": true,
-        "ui_config": {
-          "enabled": true
-        },
-        "datacenter": "${consul-datacenter-name}",
-        "data_dir": "${consul-data-dir}",
-        "log_level": "INFO",
-        "addresses": {
-          "http": "0.0.0.0"
-        },
-        "connect": {
-          "enabled": true
-        }
+      node_name = "${node-name}"
+      server    = true
+      bootstrap = true
+      ui_config {
+        enabled = true
       }
+      datacenter = "${datacenter}"
+      data_dir   = "${config-dir}"
+      log_level  = "${log-level}"
+      addresses {
+        http = "0.0.0.0"
+      }
+      connect {
+        enabled = true
+      }
+
 
 runcmd:
   - [wget, "http://example.org", -O, /wget.output.html]
-  - [mkdir, -vp, "${consul-data-dir}"]
+  - [mkdir, -vp, "${data-dir}"]
+    # Jan 30 19:04:21 cloud-init[2314]: schema.py[WARNING]: Invalid config:
+    # runcmd.2: {'sed -ire "s/("node_name"': ').*/1"$(curl -s http://169.254.169.254/latest/meta-data/tags/instance/Name)"/" /mnt/consul/config/server-config.json'} is not valid under any of the given schemas
+    # any characters yaml would eat (':' can be problematic)
+  - sed -ire "s/\(node_name = \).*/\1\"$(curl -s 169.254.169.254/latest/meta-data/tags/instance/Name)\"/" ${config-file}  # TODO: not work properly
+  - [consul, agent, --config-file=${config-file}]

@@ -7,35 +7,22 @@ data "aws_ami" "amazon_linux" {
   owners = ["amazon"]
 }
 
-resource "tls_private_key" "private_key" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-resource "aws_key_pair" "ssh-file" {
-  key_name   = "${var.project-name}-key"
-  public_key = tls_private_key.private_key.public_key_openssh
-}
-
-resource "local_file" "instance_keys" {
-  filename        = "../${aws_key_pair.ssh-file.key_name}.pem"
-  file_permission = "0400"
-  content         = tls_private_key.private_key.private_key_pem
-}
-
 data "aws_region" "current" {}
 
 data "cloudinit_config" "scout" {
   gzip          = false
-  base64_encode = false
+  base64_encode = true
   part {
     content_type = "text/cloud-config"
     content = templatefile(
       "${path.module}/cloud-config.yaml.tftpl",
       {
-        "consul-node-name"       = "consul-server-name",
-        "consul-datacenter-name" = "dc-${data.aws_region.current.name}",
-        "consul-data-dir"        = var.consul-data-dir
+        "node-name"   = var.consul-configs.node-name,
+        "datacenter"  = data.aws_region.current.name,
+        "data-dir"    = var.consul-configs.data-dir,
+        "log-level"   = var.consul-configs.log-level,
+        "config-dir"  = var.consul-configs.config-dir,
+        "config-file" = var.consul-configs.config-file
       }
     )
     filename = "hunter.yaml"
@@ -94,22 +81,34 @@ HEREDOC
 
 }
 
-resource "aws_eip" "zealot" {
-  instance = aws_instance.zealot.id
-  vpc      = true
-  tags = {
-    "Name" = "scout-eip"
-  }
+
+# TODO modular tls key
+resource "tls_private_key" "private_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
 }
 
-resource "aws_instance" "zealot" {
+resource "aws_key_pair" "ssh-file" {
+  key_name   = "${var.project-name}-key"
+  public_key = tls_private_key.private_key.public_key_openssh
+}
+
+resource "local_file" "instance_keys" {
+  filename        = "../${aws_key_pair.ssh-file.key_name}.pem"
+  file_permission = "0400"
+  content         = tls_private_key.private_key.private_key_pem
+}
+
+
+resource "aws_instance" "scouts" {
+  count         = 3
   ami           = data.aws_ami.amazon_linux.id
   instance_type = "t3.micro"
   key_name      = aws_key_pair.ssh-file.key_name
   subnet_id     = var.primary-public-subnet.id
 
   user_data                   = data.cloudinit_config.scout.rendered
-  user_data_replace_on_change = true # TODO: remove this line
+  user_data_replace_on_change = true
   vpc_security_group_ids = [
     var.scout-sg,
     var.consul-sg
@@ -127,7 +126,7 @@ resource "aws_instance" "zealot" {
   }
 
   tags = {
-    Name = "CheckInstance"
+    Name = "scout-${count.index + 1}"
   }
 }
 

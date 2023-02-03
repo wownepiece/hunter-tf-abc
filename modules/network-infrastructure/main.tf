@@ -124,7 +124,7 @@ resource "aws_security_group" "consul-sg" {
     "Name" = "consul-sg"
   }
 }
-resource "aws_security_group_rule" "allow_8300" {
+resource "aws_security_group_rule" "allow-8300" {
   description       = "allow access to consul services"
   type              = "ingress"
   protocol          = "tcp"
@@ -134,13 +134,24 @@ resource "aws_security_group_rule" "allow_8300" {
   security_group_id = aws_security_group.consul-sg.id
 }
 
-resource "aws_security_group_rule" "allow_8500" {
+resource "aws_security_group_rule" "allow-8500" {
   description       = "allow access to consul http api"
   type              = "ingress"
   protocol          = "tcp"
   cidr_blocks       = ["0.0.0.0/0"]
   from_port         = 8500
   to_port           = 8500
+  security_group_id = aws_security_group.consul-sg.id
+
+}
+
+resource "aws_security_group_rule" "self-access" {
+  description       = "allow internal self access"
+  type              = "ingress"
+  protocol          = "-1"
+  from_port         = 0
+  to_port           = 0
+  self              = true
   security_group_id = aws_security_group.consul-sg.id
 
 }

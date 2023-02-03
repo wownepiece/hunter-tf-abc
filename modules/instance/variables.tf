@@ -27,14 +27,10 @@ variable "primary-public-subnet" {
   type = any
 
 }
-variable "cloud-config-msg" {
-  type = map(any)
+variable "ssh-key-name" {
+  description = "ssh key name for ec2 ssh login"
+  type        = string
 }
-variable "telegraf-tag" {
+variable "consul-configs" {
   type = map(any)
-}
-
-variable "consul-data-dir" {
-  type = string
-
 }

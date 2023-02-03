@@ -7,7 +7,7 @@ output "public-ip" {
 }
 
 output "instance-key-name" {
-  value = module.instance.key-name
+  value = module.instance.ssh-key-name
 }
 
 output "instance" {
