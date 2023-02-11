@@ -34,3 +34,7 @@ variable "ssh-key-name" {
 variable "consul-configs" {
   type = map(any)
 }
+
+variable "consul-server-ip-pools" {
+  type = list(string)
+}

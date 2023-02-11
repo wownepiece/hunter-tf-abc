@@ -4,6 +4,7 @@ packages:
   - tree
   - htop
   - nc
+  - jq
 
 write_files:
   - path: ${config-file}
@@ -12,14 +13,19 @@ write_files:
     # consul server configuration file
     content: |
       node_name = "${node-name}"
+      disable_remote_exec=false
       server    = true
-      bootstrap = true
+      # bootstrap = true
       ui_config {
-        enabled = true
+        enabled = true # TODO: only server
       }
       datacenter = "${datacenter}"
-      data_dir   = "${config-dir}"
+      data_dir   = "${data-dir}"
       log_level  = "${log-level}"
+      log_file = "${log-file}"
+      log_rotate_bytes = "${log-rotate-bytes}"
+      log_rotate_duration = "${log-rotate-duration}"
+      log_rotate_max_files = "${log-rotate-max-files}"
       addresses {
         http = "0.0.0.0"
       }
@@ -35,4 +41,4 @@ runcmd:
     # runcmd.2: {'sed -ire "s/("node_name"': ').*/1"$(curl -s http://169.254.169.254/latest/meta-data/tags/instance/Name)"/" /mnt/consul/config/server-config.json'} is not valid under any of the given schemas
     # any characters yaml would eat (':' can be problematic)
   - sed -ire "s/\(node_name = \).*/\1\"$(curl -s 169.254.169.254/latest/meta-data/tags/instance/Name)\"/" ${config-file}  # TODO: not work properly
-  - [consul, agent, --config-file=${config-file}]
+  # - [consul, agent, --config-file=${config-file}]

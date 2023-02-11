@@ -17,12 +17,16 @@ data "cloudinit_config" "scout" {
     content = templatefile(
       "${path.module}/cloud-config.yaml.tftpl",
       {
-        "node-name"   = var.consul-configs.node-name,
-        "datacenter"  = data.aws_region.current.name,
-        "data-dir"    = var.consul-configs.data-dir,
-        "log-level"   = var.consul-configs.log-level,
-        "config-dir"  = var.consul-configs.config-dir,
-        "config-file" = var.consul-configs.config-file
+        "node-name"            = var.consul-configs.node-name,
+        "datacenter"           = data.aws_region.current.name,
+        "data-dir"             = var.consul-configs.data-dir,
+        "log-level"            = var.consul-configs.log-level,
+        "log-file"             = var.consul-configs.log-file,
+        "log-rotate-bytes"     = var.consul-configs.log-rotate-bytes,
+        "log-rotate-duration"  = var.consul-configs.log-rotate-duration,
+        "log-rotate-max-files" = var.consul-configs.log-rotate-max-files,
+        "config-dir"           = var.consul-configs.config-dir,
+        "config-file"          = var.consul-configs.config-file
       }
     )
     filename = "hunter.yaml"
@@ -107,12 +111,13 @@ resource "aws_instance" "scouts" {
   key_name      = aws_key_pair.ssh-file.key_name
   subnet_id     = var.primary-public-subnet.id
 
+  # temporary comment out for testing purposes
+  # private_ip                  = var.consul-server-ip-pools[count.index]
   user_data                   = data.cloudinit_config.scout.rendered
   user_data_replace_on_change = true
   vpc_security_group_ids = [
     var.scout-sg,
     var.consul-sg
-
   ]
 
   metadata_options {

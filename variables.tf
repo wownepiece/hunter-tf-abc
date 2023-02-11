@@ -58,4 +58,7 @@ variable "consul-configs" {
   nullable = false
 }
 
+variable "consul-server-ip-pools" {
+  type = list(string)
+}
 
