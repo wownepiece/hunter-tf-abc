@@ -20,7 +20,8 @@ resource "aws_instance" "scouts" {
   user_data_replace_on_change = true
   vpc_security_group_ids = [
     var.scout-sg,
-    var.consul-sg
+    var.consul-sg,
+    var.nomad-sg
   ]
 
   metadata_options {

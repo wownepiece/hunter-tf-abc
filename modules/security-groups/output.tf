@@ -4,3 +4,6 @@ output "scout-sg" {
 output "consul-sg" {
   value = aws_security_group.consul-sg.id
 }
+output "nomad-sg" {
+  value = aws_security_group.nomad.id
+}

@@ -19,6 +19,10 @@ variable "consul-sg" {
   description = "security group for consul"
   type        = string
 }
+variable "nomad-sg" {
+  description = "security group for nomad"
+  type        = string
+}
 
 variable "primary-vpc" {
   type = any

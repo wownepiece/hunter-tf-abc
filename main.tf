@@ -35,6 +35,7 @@ module "instance" {
   ssh-key-name           = module.gen-localkey.key-name
   scout-sg               = module.security-groups.scout-sg
   consul-sg              = module.security-groups.consul-sg
+  nomad-sg               = module.security-groups.nomad-sg
   primary-vpc            = module.network-infrastructure.primary-vpc
   primary-public-subnet  = module.network-infrastructure.primary-public-subnet
   consul-configs         = var.consul-configs
