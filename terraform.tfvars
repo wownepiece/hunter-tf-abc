@@ -1,5 +1,5 @@
 namespace                         = "personal"
-region                            = "us-west-1"
+region                            = "us-west-2"
 project-name                      = "scout"
 ssh_key                           = ""
 ssh-key-name                      = "aws.personal.N.CA"
