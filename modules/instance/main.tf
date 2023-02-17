@@ -70,6 +70,8 @@ EOT
 yum install -y yum-utils shadow-utils
 yum-config-manager --add-repo https://rpm.releases.hashicorp.com/AmazonLinux/hashicorp.repo
 yum -y install consul nomad
+consul -autocomplete-install
+nomad -autocomplete-install
 HEREDOC
   }
 
