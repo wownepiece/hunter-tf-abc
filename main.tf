@@ -3,7 +3,6 @@ module "gen-localkey" {
   namespace    = var.namespace
   project-name = var.project-name
   local-path   = var.local-key-file-path
-
 }
 module "network-infrastructure" {
   source                            = "./modules/network-infrastructure"
@@ -12,6 +11,14 @@ module "network-infrastructure" {
   primary-cidr-block                = var.primary-cidr-block
   primary-subnet-private-cidr-block = var.primary-subnet-private-cidr-block
   primary-subnet-public-cidr-block  = var.primary-subnet-public-cidr-block
+}
+
+module "user-data" {
+  source         = "./modules/user-data-abc"
+  namespace      = var.namespace
+  project-name   = var.project-name
+  consul-configs = var.consul-configs
+
 }
 module "instance" {
   source                 = "./modules/instance"
@@ -25,5 +32,5 @@ module "instance" {
   primary-public-subnet  = module.network-infrastructure.primary-public-subnet
   consul-configs         = var.consul-configs
   consul-server-ip-pools = var.consul-server-ip-pools
-
+  cloud-init-data        = module.user-data.rendered-cloud-init-data
 }

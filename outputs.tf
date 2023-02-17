@@ -16,7 +16,7 @@ output "instance" {
 output "ssh-cmds" {
   # value = "ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -i ../${module.instance.scouts[*].key_name} ec2-user@${module.instance.scouts[*].public_ip}"
   value = {
-    for k, v in module.instance.scouts : v.tags_all.Name => "ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -i ../${v.key_name}.pem ec2-user@${v.public_ip}"
+    for k, v in module.instance.scouts : v.tags_all.Name => "ssh -oStrictHostKeyChecking=no -oUserKnownHostsFile=/dev/null -i ${var.local-key-file-path}/${v.key_name}.pem ec2-user@${v.public_ip}"
   }
 }
 

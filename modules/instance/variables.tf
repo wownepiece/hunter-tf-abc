@@ -38,3 +38,7 @@ variable "consul-configs" {
 variable "consul-server-ip-pools" {
   type = list(string)
 }
+
+variable "cloud-init-data" {
+  type = string
+}
