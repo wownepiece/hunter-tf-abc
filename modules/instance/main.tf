@@ -87,30 +87,11 @@ HEREDOC
 
 }
 
-
-# TODO modular tls key
-resource "tls_private_key" "private_key" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-resource "aws_key_pair" "ssh-file" {
-  key_name   = "${var.project-name}-key"
-  public_key = tls_private_key.private_key.public_key_openssh
-}
-
-resource "local_file" "instance_keys" {
-  filename        = "../${aws_key_pair.ssh-file.key_name}.pem"
-  file_permission = "0400"
-  content         = tls_private_key.private_key.private_key_pem
-}
-
-
 resource "aws_instance" "scouts" {
   count         = 3
   ami           = data.aws_ami.amazon_linux.id
   instance_type = "t3.micro"
-  key_name      = aws_key_pair.ssh-file.key_name
+  key_name      = var.ssh-key-name
   subnet_id     = var.primary-public-subnet.id
 
   # temporary comment out for testing purposes

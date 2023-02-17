@@ -62,3 +62,7 @@ variable "consul-server-ip-pools" {
   type = list(string)
 }
 
+
+variable "local-key-file-path" {
+  type = string
+}
